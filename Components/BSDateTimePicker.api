@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wodefinitions>
+    <wo class="BSDateTimePicker" wocomponentcontent="false">    <binding name="datetime"/>
+        <validation message="'date' is a required binding.">
+            <unbound name="datetime"/>
+        </validation>
+    </wo>
+</wodefinitions>
