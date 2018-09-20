@@ -4,5 +4,6 @@
         <validation message="'date' is a required binding.">
             <unbound name="datetime"/>
         </validation>
+    <binding name="label"/>
     </wo>
 </wodefinitions>
