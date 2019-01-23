@@ -1,0 +1,4 @@
+LabelContainer : WOGenericContainer {
+	elementName = "label";
+	class = "btn btn-secondary";
+}

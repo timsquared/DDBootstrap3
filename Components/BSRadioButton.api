@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wodefinitions>
+        <wo class="BSRadioButton.java" wocomponentcontent="false">
+
+        <binding name="checked"/>
+        <validation message="'checked' is a required binding.">
+            <unbound name="checked"/>
+        </validation>
+    <binding name="disabled"/>
+    <binding name="label"/>
+    </wo>
+</wodefinitions>
