@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wodefinitions>
+        <wo class="BSSlider.java" wocomponentcontent="false">
+
+        <binding name="dateformat"/>
+        <binding name="disabled"/>
+        <binding name="formatter"/>
+        <binding name="helpText"/>
+        <binding name="label"/>
+        <binding name="numberformat"/>
+        <binding name="required"/>
+        <binding name="requiredequaltofunction"/>
+        <binding name="requiredequaltoid"/>
+        <binding name="requiredlength"/>
+        <binding name="requiredmax"/>
+        <binding name="requiredmaxlength"/>
+        <binding name="requiredmin"/>
+        <binding name="requiredminlength"/>
+        <binding name="requiredpattern"/>
+        <binding name="requiredrange"/>
+        <binding name="requiredtype"/>
+        <binding name="type"/>
+        <binding name="unit"/>
+        <binding name="useDecimalNumber"/>
+        <binding name="value"/>
+        <validation message="'value' is a required binding.">
+            <unbound name="value"/>
+        </validation>
+    <binding name="sliderId"/>
+    <binding name="slidermin"/>
+    <binding name="slidermax"/>
+    <validation message="'slidermin' is a required binding.">
+            <unbound name="slidermin"/>
+        </validation>
+        <validation message="'slidermax' is a required binding.">
+            <unbound name="slidermax"/>
+        </validation>
+    <binding name="slidervalue"/>
+    <binding name="sliderorientation"/>
+    </wo>
+</wodefinitions>

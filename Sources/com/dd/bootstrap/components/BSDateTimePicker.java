@@ -18,6 +18,14 @@ public class BSDateTimePicker extends BSComponent {
         super(context);
     }
     
+    public void appendToResponse(WOResponse response, WOContext context) {
+      super.appendToResponse(response, context);
+      String script = "jQuery(function () {" + 
+          "jQuery('#datetimepicker1').datetimepicker();" + 
+          "})";
+      ERXResponseRewriter.addScriptCodeInHead(response, context, script);
+    }
+    
     public boolean isStateless() {
       return true;
     }
