@@ -2,7 +2,7 @@
 <wodefinitions>
         <wo class="BSSlider.java" wocomponentcontent="false">
 
-        <binding name="dateformat"/>
+        
         <binding name="disabled"/>
         <binding name="formatter"/>
         <binding name="helpText"/>
@@ -19,7 +19,7 @@
         <binding name="requiredpattern"/>
         <binding name="requiredrange"/>
         <binding name="requiredtype"/>
-        <binding name="type"/>
+        
         <binding name="unit"/>
         <binding name="useDecimalNumber"/>
         <binding name="value"/>
@@ -37,5 +37,6 @@
         </validation>
     <binding name="slidervalue"/>
     <binding name="sliderorientation"/>
+    <binding name="sliderstep"/>
     </wo>
 </wodefinitions>
