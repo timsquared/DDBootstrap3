@@ -1,4 +1,4 @@
-package com.dd.bootstrap.components;
+package com.dd.bootstrap.dynamicelements;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import com.dd.bootstrap.dynamicelements.BSTextField;
+import com.dd.bootstrap.components.BSComponent;
 import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
