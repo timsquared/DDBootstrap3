@@ -7,6 +7,7 @@ import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOElement;
 import com.webobjects.appserver.WOResponse;
+import com.webobjects.appserver._private.WODynamicElementCreationException;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableDictionary;
 
@@ -39,6 +40,7 @@ public class BSSlider extends ERXWOTextField {
         _class = null;
         
         //BSDynamicElementsHelper.AppendCSS(_associations, this);
+        _useDecimalNumber = WOAssociation.associationWithValue(Boolean.TRUE);
         
         _label = _associations.removeObjectForKey("label");
        // _sliderId = _associations.removeObjectForKey("sliderId");
@@ -49,6 +51,10 @@ public class BSSlider extends ERXWOTextField {
         //_required = _associations.removeObjectForKey("required");
         //_helpText = _associations.removeObjectForKey("helpText");
        // _unit = _associations.removeObjectForKey("unit");
+        
+        if(_dateFormat != null) {
+          throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'dateFormat' since slider is for numbers only");
+        }
     }
     
     @Override
