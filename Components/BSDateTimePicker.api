@@ -9,5 +9,9 @@
             <unbound name="value"/>
         </validation>
     <binding name="name"/>
+    <binding name="dateformat"/>
+        <binding name="formatter"/>
+    <binding defaults="Boolean" name="dateonly"/>
+    <binding name="placeholder"/>
     </wo>
 </wodefinitions>
