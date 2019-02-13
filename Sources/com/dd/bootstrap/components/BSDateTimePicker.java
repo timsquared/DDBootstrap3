@@ -7,9 +7,11 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOResponse;
 
 import er.extensions.appserver.ERXResponseRewriter;
+import er.extensions.appserver.ERXWOContext;
 
 public class BSDateTimePicker extends BSComponent {
   
+  private String _id;
   private String _dateTimeString;
   private static DateTimeFormatter _formatter = null;
   private static final String _dateTimeFormat = "MM/dd/yyyy h:mm a";
@@ -20,14 +22,20 @@ public class BSDateTimePicker extends BSComponent {
     
     public void appendToResponse(WOResponse response, WOContext context) {
       super.appendToResponse(response, context);
-      String script = "jQuery(function () {" + 
-          "jQuery('#datetimepicker1').datetimepicker();" + 
-          "})";
-      ERXResponseRewriter.addScriptCodeInHead(response, context, script);
+      ERXResponseRewriter.addScriptCodeInHead(response, context, pickerJS(context));
     }
     
     public boolean isStateless() {
       return true;
+    }
+    
+    private String pickerJS(WOContext context) {
+      StringBuilder str = new StringBuilder();
+      str.append("jQuery(function () {jQuery('#")
+      .append(id())
+      .append("').datetimepicker();})");
+      //.append("})");
+      return str.toString();
     }
     
     @Override
@@ -72,5 +80,20 @@ public class BSDateTimePicker extends BSComponent {
     
     public void setDatetime(LocalDateTime newDate) {
       setValueForBinding(newDate, "datetime");
+    }
+    
+    public String id() {
+      if(_id == null) {
+        _id = stringValueForBinding("id", null);
+        
+        if(_id == null) {
+          _id = ERXWOContext.safeIdentifierName(context(), false);
+        }
+      }
+      return _id;
+    }
+    
+    public void setId(String newId) {
+      //do nothing
     }
 }

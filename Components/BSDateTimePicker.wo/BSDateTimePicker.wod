@@ -1,0 +1,6 @@
+InputGroupDiv : WOGenericContainer {
+	elementName = "div";
+	elementID = id;
+	id = id;
+	class = "input-group";
+}
