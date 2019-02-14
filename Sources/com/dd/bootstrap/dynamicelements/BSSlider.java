@@ -94,13 +94,19 @@ public class BSSlider extends ERXWOTextField {
     }
     
     private String sliderJS(WOContext context) {
+      
+      String sliderLabel = "Current Value";
+      if(_label != null) {
+        sliderLabel = (String)_label.valueInComponent(context.component());
+      }
+      
       StringBuilder str = new StringBuilder();
       str.append("<script type=\"text/javascript\">\n");
       str.append("$('#")
       .append(id(context))
-      .append("').slider({formatter: function(value) {")
-      .append("return 'Current Value: ' + value;")
-      .append("}});");
+      .append("').slider({formatter: function(value) {return '")
+      .append(sliderLabel)
+      .append(": ' + value;}});");
       str.append("\n</script>\n");
       return str.toString();
     }
