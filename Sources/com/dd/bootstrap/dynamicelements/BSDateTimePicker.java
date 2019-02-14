@@ -91,26 +91,26 @@ public class BSDateTimePicker extends ERXWOTextField {
   }
 
   public void appendToResponse(WOResponse response, WOContext context) {
-
-    //do some stuff here to wrap the input element
-    String _idValue = divId(context);
-    StringBuilder sb = new StringBuilder();
-    sb.append("<div class=\"input-group\" id=")
-    .append(_idValue)
-    .append("><span class=\"input-group-addon\">")
-    .append("<span class=\"glyphicon glyphicon-calendar\"/></span>");
-    response.appendContentString(sb.toString());
-
-    super.appendToResponse(response, context); //generate our input element
-    _appendValueAttributeToResponse(response, context);
-    response.appendContentString("</div>"); //close surrounding div after input
-
+    
     //we need our boostrap components that are necesssary for date/time picker
     ERXResponseRewriter.addStylesheetResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "css/bootstrap-datetimepicker.min.css");
     ERXResponseRewriter.addStylesheetResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/prettify.css");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/moment.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/bootstrap-datetimepicker.min.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/run_prettify.js");
+    
+    //do some stuff here to wrap the input element
+    String _idValue = divId(context);
+    StringBuilder sb = new StringBuilder();
+    sb.append("<div class=\"input-group\" id=")
+    .append(_idValue)
+    .append("><span class=\"input-group-addon\">")
+    .append("<span class=\"glyphicon glyphicon-calendar\"></span></span>");
+    response.appendContentString(sb.toString());
+
+    super.appendToResponse(response, context); //generate our input element
+    _appendValueAttributeToResponse(response, context);
+    response.appendContentString("</div>"); //close surrounding div after input
 
     //do some stuff here to finish wrapping the input element
 
