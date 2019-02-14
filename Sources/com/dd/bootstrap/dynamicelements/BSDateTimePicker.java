@@ -81,6 +81,10 @@ public class BSDateTimePicker extends ERXWOTextField {
 
   @Override
   public void appendAttributesToResponse(WOResponse response, WOContext context) {
+    
+    String _defaultClass = "form-control";
+    response._appendTagAttributeAndValue("class", _defaultClass, false);
+    
     if(_placeholderText != null) {
       String phText = (String)_placeholderText.valueInComponent(context.component());
       if(phText.length() != 0) {
