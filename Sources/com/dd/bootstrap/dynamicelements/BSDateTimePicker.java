@@ -178,18 +178,18 @@ public class BSDateTimePicker extends ERXWOTextField {
 
               boolean useDateWithoutTime = dateOnly(context);
               if(useDateWithoutTime) {
-                System.err.println("submitting date without time");
+                log.debug("submitting date without time");
                 parsedObject = LocalDate.parse(stringValue, format);
                 reformattedObject = ((LocalDate)parsedObject).format(format);
                 result = LocalDate.parse(reformattedObject, format);
               } else {
-                System.err.println("submitting date with time");
+                log.debug("submitting date with time");
                 parsedObject = LocalDateTime.parse(stringValue, format);
-                System.err.println("parsed object: " + parsedObject);
+                log.debug("parsed object '{}'", parsedObject);
                 reformattedObject = ((LocalDateTime)parsedObject).format(format);
-                System.err.println("reformatted as string: " + reformattedObject);
+                log.debug("reformatted as string: '{}'", reformattedObject);
                 result = LocalDateTime.parse(reformattedObject, format);
-                System.err.println("final result string: " + result);
+                log.debug("final result string: '{}'", result);
               }
               //Object parsedObject = format.parseObject(stringValue);
               //String reformatedObject = format.format(parsedObject);
@@ -206,7 +206,7 @@ public class BSDateTimePicker extends ERXWOTextField {
         } else if(blankIsNull && result.toString().length() == 0) {
           result = null;
         }
-        System.err.println("value being set in date/time picker: " + result);
+        log.debug("value being set in date/time picker: " + result);
         _value.setValue(result, component);
       }
 
