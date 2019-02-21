@@ -1,0 +1,6 @@
+FormGroupDiv : WOGenericContainer {
+	elementName = "div";
+//	elementID = ^id;
+	class = "form-group";
+	id = ^id;
+}
