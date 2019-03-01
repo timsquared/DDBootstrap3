@@ -13,5 +13,6 @@
         <binding name="formatter"/>
     <binding defaults="Boolean" name="dateonly"/>
     <binding name="placeholder"/>
+    <binding name="timeonly"/>
     </wo>
 </wodefinitions>
