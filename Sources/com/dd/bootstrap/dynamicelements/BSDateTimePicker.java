@@ -2,6 +2,7 @@ package com.dd.bootstrap.dynamicelements;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -79,7 +80,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     if(_dateFormat != null && _formatter != null) {
       throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'dateFormat' and 'formatter' bound at the same time.");
     }
-    
+
     if(_dateOnly != null && _timeOnly != null) {
       throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'timeonly' and 'dateonly' bound at the same time.");
     }
@@ -87,10 +88,10 @@ public class BSDateTimePicker extends ERXWOTextField {
 
   @Override
   public void appendAttributesToResponse(WOResponse response, WOContext context) {
-    
+
     String _defaultClass = "form-control";
     response._appendTagAttributeAndValue("class", _defaultClass, false);
-    
+
     if(_placeholderText != null) {
       String phText = (String)_placeholderText.valueInComponent(context.component());
       if(phText.length() != 0) {
@@ -101,14 +102,14 @@ public class BSDateTimePicker extends ERXWOTextField {
   }
 
   public void appendToResponse(WOResponse response, WOContext context) {
-    
+
     //we need our boostrap components that are necesssary for date/time picker
     ERXResponseRewriter.addStylesheetResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "css/bootstrap-datetimepicker.min.css");
     ERXResponseRewriter.addStylesheetResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/prettify.css");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/moment.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/bootstrap-datetimepicker.min.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/run_prettify.js");
-    
+
     //do some stuff here to wrap the input element
     String _idValue = divId(context);
     StringBuilder sb = new StringBuilder();
@@ -137,17 +138,29 @@ public class BSDateTimePicker extends ERXWOTextField {
       str.append("{format: 'L'}");
     }
     str.append(");});");
-    
+
     return str.toString();
   }
 
   private boolean dateOnly(WOContext context) {
-    
+
     if(_dateOnly == null)
       return true;
-    
+
     boolean noTime = _dateOnly.booleanValueInComponent(context.component());
     if(noTime)
+      return true;
+
+    return false;
+  }
+
+  private boolean timeOnly(WOContext context) {
+
+    if(_timeOnly == null)
+      return true;
+
+    boolean noDate = _timeOnly.booleanValueInComponent(context.component());
+    if(noDate)
       return true;
 
     return false;
@@ -174,7 +187,7 @@ public class BSDateTimePicker extends ERXWOTextField {
           stringValue = (objValue == null) ? null : objValue.toString();
         }
         Object result = stringValue;
-        
+
         if(stringValue != null) {
           if(format != null) {
             Object parsedObject = null;
@@ -183,11 +196,21 @@ public class BSDateTimePicker extends ERXWOTextField {
             try {
 
               boolean useDateWithoutTime = dateOnly(context);
+              boolean useTimeWithoutDate = timeOnly(context);
+              
               if(useDateWithoutTime) {
-                log.debug("submitting date without time");
+                log.debug("submitting date with no time");
                 parsedObject = LocalDate.parse(stringValue, format);
                 reformattedObject = ((LocalDate)parsedObject).format(format);
                 result = LocalDate.parse(reformattedObject, format);
+              } else if(useTimeWithoutDate) {  
+                log.debug("submitting the time with no date");
+                parsedObject = LocalTime.parse(stringValue, format);
+                log.debug("parsed object '{}'", parsedObject);
+                reformattedObject = ((LocalTime)parsedObject).format(format);
+                log.debug("reformatted as string: '{}'", reformattedObject);
+                result = LocalTime.parse(reformattedObject, format);
+                log.debug("final result string: '{}'", result);
               } else {
                 log.debug("submitting date with time");
                 parsedObject = LocalDateTime.parse(stringValue, format);
@@ -208,7 +231,7 @@ public class BSDateTimePicker extends ERXWOTextField {
               return;
             }
           }
-          
+
         } else if(blankIsNull && result.toString().length() == 0) {
           result = null;
         }
