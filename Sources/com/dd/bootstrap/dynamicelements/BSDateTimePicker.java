@@ -79,6 +79,10 @@ public class BSDateTimePicker extends ERXWOTextField {
     if(_dateFormat != null && _formatter != null) {
       throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'dateFormat' and 'formatter' bound at the same time.");
     }
+    
+    if(_dateOnly != null && _timeOnly != null) {
+      throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'timeonly' and 'dateonly' bound at the same time.");
+    }
   }
 
   @Override
