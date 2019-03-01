@@ -115,8 +115,13 @@ public class BSDateTimePicker extends ERXWOTextField {
     StringBuilder sb = new StringBuilder();
     sb.append("<div class=\"input-group\" id=")
     .append(_idValue)
-    .append("><span class=\"input-group-addon\">")
-    .append("<span class=\"glyphicon glyphicon-calendar\"></span></span>");
+    .append("><span class=\"input-group-addon\">");
+    if(timeOnly(context)) {
+      sb.append("<span class=\"glyphicon glyphicon-time\">");
+    } else {
+      sb.append("<span class=\"glyphicon glyphicon-calendar\">");
+    }
+    sb.append("</span></span>");
     response.appendContentString(sb.toString());
 
     super.appendToResponse(response, context); //generate our input element
@@ -135,10 +140,12 @@ public class BSDateTimePicker extends ERXWOTextField {
     .append(divId(context))
     .append("').datetimepicker(");
     if(dateOnly(context)) {
+      System.err.println("the content javascript is appending for date only");
       str.append("{format: 'L'}");
     } else if(timeOnly(context)) {
       System.err.println("the content javascript is appending for time only");
-      str.append("{format: 'HH:mm', pickDate:false }");
+      str.append("{format: 'LT'}");
+      //str.append("{format: 'HH:mm', pickDate:false }");
     }
     str.append(");});");
 
@@ -148,7 +155,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private boolean dateOnly(WOContext context) {
 
     if(_dateOnly == null)
-      return true;
+      return false;
 
     boolean noTime = _dateOnly.booleanValueInComponent(context.component());
     if(noTime)
