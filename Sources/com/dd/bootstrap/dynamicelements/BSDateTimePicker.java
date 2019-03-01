@@ -137,6 +137,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     if(dateOnly(context)) {
       str.append("{format: 'L'}");
     } else if(timeOnly(context)) {
+      System.err.println("the content javascript is appending for time only");
       str.append("{format: 'HH:mm', pickDate:false }");
     }
     str.append(");});");
@@ -159,7 +160,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private boolean timeOnly(WOContext context) {
 
     if(_timeOnly == null)
-      return true;
+      return false;
 
     boolean noDate = _timeOnly.booleanValueInComponent(context.component());
     if(noDate)
