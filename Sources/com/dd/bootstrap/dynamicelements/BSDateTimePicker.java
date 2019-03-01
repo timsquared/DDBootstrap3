@@ -50,6 +50,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private WOAssociation _label; //String
   private WOAssociation _placeholderText;
   private WOAssociation _dateOnly; //Boolean
+  private WOAssociation _timeOnly; //Boolean
   private WOAssociation _myClass;
   private NSMutableDictionary<String,WOAssociation> _associationsBackup;
 
@@ -66,6 +67,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     _myId =             (WOAssociation)nsdictionary.remove("id");
     _myClass =          (WOAssociation)nsdictionary.remove("class"); //honestly, not doing anything with class at this point
     _dateOnly =         (WOAssociation)nsdictionary.remove("dateonly");
+    _timeOnly =         (WOAssociation)nsdictionary.remove("timeonly");
     _dateFormat =       (WOAssociation)nsdictionary.remove("dateformat");
     _formatter =        (WOAssociation)nsdictionary.remove("formatter");
     _placeholderText =  (WOAssociation)nsdictionary.remove("placeholder");
