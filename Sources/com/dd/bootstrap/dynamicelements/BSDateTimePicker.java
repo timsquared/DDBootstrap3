@@ -136,6 +136,8 @@ public class BSDateTimePicker extends ERXWOTextField {
     .append("').datetimepicker(");
     if(dateOnly(context)) {
       str.append("{format: 'L'}");
+    } else if(timeOnly(context)) {
+      str.append("{format: 'HH:mm', pickDate:false }");
     }
     str.append(");});");
 
