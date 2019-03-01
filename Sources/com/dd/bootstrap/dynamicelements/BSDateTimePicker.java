@@ -256,6 +256,10 @@ public class BSDateTimePicker extends ERXWOTextField {
             formattedStrValue = ((LocalDate)objValue).format(format);
             parsedValue = LocalDate.parse(formattedStrValue, format);
             strValue = ((LocalDate)parsedValue).format(format);
+          } else if(timeOnly(context)) {
+            formattedStrValue = ((LocalTime)objValue).format(format);
+            parsedValue = LocalTime.parse(formattedStrValue, format);
+            strValue = ((LocalTime)parsedValue).format(format);
           } else {
             formattedStrValue = ((LocalDateTime)objValue).format(format);
             parsedValue = LocalDateTime.parse(formattedStrValue, format);
