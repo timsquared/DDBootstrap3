@@ -55,8 +55,9 @@ public class BSDateTimePicker extends ERXWOTextField {
   private WOAssociation _myClass;
   private NSMutableDictionary<String,WOAssociation> _associationsBackup;
 
-  private static final String DATE_TIME_DEFAULT_FORMAT = "MM/dd/yyyy h:mm a";
   private static final String DATE_ONLY_DEFAULT_FORMAT = "MM/dd/yyyy";
+  private static final String TIME_ONLY_DEFAULT_FORMAT = "h:mm a";
+  private static final String DATE_TIME_DEFAULT_FORMAT = DATE_ONLY_DEFAULT_FORMAT + " " + TIME_ONLY_DEFAULT_FORMAT;
 
   private static Logger log = LoggerFactory.getLogger(BSDateTimePicker.class);
 
@@ -234,7 +235,8 @@ public class BSDateTimePicker extends ERXWOTextField {
               //String reformatedObject = format.format(parsedObject);
               //result = format.parseObject(reformatedObject);
             } catch(DateTimeParseException parseexception) {
-              log.error("there was an exception parsing the date with formatter '{}'", format);
+              log.error("there was an exception parsing the date with formatter");
+              log.error("the string is '{}' and the formatter is using the format string '{'}", stringValue, dateFormat(context));
               String keyPath = _value.keyPath();
               ERXValidationException validationexception = new ERXValidationException(ERXValidationException.InvalidValueException, parseexception, keyPath, stringValue);
               component.validationFailedWithException(validationexception, stringValue, keyPath);
@@ -298,15 +300,17 @@ public class BSDateTimePicker extends ERXWOTextField {
   private String dateFormat(WOContext context) {
     if(_dateFormat != null)
       return (String)_dateFormat.valueInComponent(context.component());
-
-    if(dateOnly(context)) {
+    
+    if(timeOnly(context)) {
+      return TIME_ONLY_DEFAULT_FORMAT;
+    } else if(dateOnly(context)) {
       return DATE_ONLY_DEFAULT_FORMAT;
     }
     System.err.println("not using date-only in picker");
     return DATE_TIME_DEFAULT_FORMAT;
   }
 
-  public DateTimeFormatter formatter(WOContext context) {
+  public synchronized DateTimeFormatter formatter(WOContext context) {
     //preferred - formatter is not null
     if(_formatter != null) {
       DateTimeFormatter _theFormatter = null;
