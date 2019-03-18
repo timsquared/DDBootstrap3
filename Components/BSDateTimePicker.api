@@ -14,5 +14,6 @@
     <binding defaults="Boolean" name="dateonly"/>
     <binding name="placeholder"/>
     <binding name="timeonly"/>
+    <binding name="blankIsNull"/>
     </wo>
 </wodefinitions>

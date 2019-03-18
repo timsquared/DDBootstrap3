@@ -53,6 +53,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private WOAssociation _dateOnly; //Boolean
   private WOAssociation _timeOnly; //Boolean
   private WOAssociation _myClass;
+  protected WOAssociation _blankIsNull;
   private NSMutableDictionary<String,WOAssociation> _associationsBackup;
 
   private static final String DATE_ONLY_DEFAULT_FORMAT = "MM/dd/yyyy";
@@ -73,6 +74,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     _dateFormat =       (WOAssociation)nsdictionary.remove("dateformat");
     _formatter =        (WOAssociation)nsdictionary.remove("formatter");
     _placeholderText =  (WOAssociation)nsdictionary.remove("placeholder");
+    _blankIsNull = _associations.removeObjectForKey("blankIsNull");
     _numberFormat =     WOAssociation.associationWithValue(null); //always destroy any number formatting
     _useDecimalNumber = WOAssociation.associationWithValue(null); //always destroy any number formatting
     _id = null;
@@ -191,7 +193,9 @@ public class BSDateTimePicker extends ERXWOTextField {
         String stringValue;
         boolean blankIsNull = _blankIsNull == null || _blankIsNull.booleanValueInComponent(component);
         if (blankIsNull) {
+          System.err.println("blank is null");
           stringValue = worequest.stringFormValueForKey(name);
+          System.err.println("string value: " + stringValue);
         }
         else {
           Object objValue = worequest.formValueForKey(name);
@@ -208,7 +212,7 @@ public class BSDateTimePicker extends ERXWOTextField {
 
               boolean useDateWithoutTime = dateOnly(context);
               boolean useTimeWithoutDate = timeOnly(context);
-              
+
               if(useDateWithoutTime) {
                 log.debug("submitting date with no time");
                 parsedObject = LocalDate.parse(stringValue, format);
@@ -242,15 +246,15 @@ public class BSDateTimePicker extends ERXWOTextField {
               component.validationFailedWithException(validationexception, stringValue, keyPath);
               return;
             }
-          }
 
-        } else if(blankIsNull && result.toString().length() == 0) {
-          result = null;
+          } else if(blankIsNull && result.toString().length() == 0) {
+            result = null;
+          }
         }
+
         log.debug("value being set in date/time picker: " + result);
         _value.setValue(result, component);
       }
-
     }
   }
 
