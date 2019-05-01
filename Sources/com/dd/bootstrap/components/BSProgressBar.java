@@ -1,7 +1,7 @@
 package com.dd.bootstrap.components;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.webobjects.appserver.WOContext;
 

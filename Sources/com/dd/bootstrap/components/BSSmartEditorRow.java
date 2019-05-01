@@ -5,8 +5,8 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.ParsePosition;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.dd.bootstrap.components.smartEditorRowInterfaces.IBSHelpTextProvider;
 import com.dd.bootstrap.components.smartEditorRowInterfaces.IBSLabelStringProvider;
