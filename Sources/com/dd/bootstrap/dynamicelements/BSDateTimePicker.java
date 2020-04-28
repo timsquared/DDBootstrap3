@@ -53,7 +53,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private WOAssociation _dateOnly; //Boolean
   private WOAssociation _timeOnly; //Boolean
   private WOAssociation _glyph; //String
-  //private NSMutableDictionary<String,WOAssociation> _associationsBackup;
+  private WOAssociation _myId; //String
   
   private static final String GLYPH_LEFT                = "left";
   private static final String GLYPH_RIGHT               = "right";
@@ -67,6 +67,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     super(tagname, nsdictionary, woelement);
     BSDynamicElementsHelper.AppendCSS(_associations, this);
     
+    _myId =             _associations.removeObjectForKey("id");
     _dateOnly =         _associations.removeObjectForKey("dateonly");
     _timeOnly =         _associations.removeObjectForKey("timeonly");
     _glyph =            _associations.removeObjectForKey("glyph");
@@ -87,7 +88,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   public void appendAttributesToResponse(WOResponse response, WOContext context) {
     
     WOComponent component = context.component();
-    String _inputId = inputId(context);
+    String _inputId = idInContext(context);
     
     String _defaultClass = "form-control";
     response._appendTagAttributeAndValue("class", _defaultClass, false);
@@ -172,13 +173,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     return sb;
   }
   
-  private String inputId(WOContext context) {
-    if(_id == null)
-      return null;
-    
-    String _inputId = (String)_id.valueInComponent(context.component());
-    return _inputId;
-  }
+  
 
   private boolean dateOnlyInContext(WOContext context) {
 
