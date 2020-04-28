@@ -28,6 +28,9 @@ public class BSDynamicElementsHelper {
 		else if (element instanceof BSBrowser) {
 			associations.setObjectForKey(WOAssociation.associationWithValue("form-control"), "class");
 		}
+		else if(element instanceof BSDateTimePicker) {
+		  associations.setObjectForKey(WOAssociation.associationWithValue("form-control"), "class");
+		}
 	}
 	
 }

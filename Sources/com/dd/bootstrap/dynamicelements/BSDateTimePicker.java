@@ -53,7 +53,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private WOAssociation _dateOnly; //Boolean
   private WOAssociation _timeOnly; //Boolean
   private WOAssociation _glyph; //String
-  private WOAssociation _myId; //String
+  private WOAssociation _divId; //String
   
   private static final String GLYPH_LEFT                = "left";
   private static final String GLYPH_RIGHT               = "right";
@@ -64,10 +64,10 @@ public class BSDateTimePicker extends ERXWOTextField {
   private static Logger log = LoggerFactory.getLogger(BSDateTimePicker.class);
 
   public BSDateTimePicker(String tagname, NSDictionary nsdictionary, WOElement woelement) {
-    super(tagname, nsdictionary, woelement);
+    super("input", nsdictionary, woelement);
     BSDynamicElementsHelper.AppendCSS(_associations, this);
     
-    _myId =             _associations.removeObjectForKey("id");
+    _divId =            _associations.objectForKey("id"); //we do this because we need the id even when we don't want the input element to have it
     _dateOnly =         _associations.removeObjectForKey("dateonly");
     _timeOnly =         _associations.removeObjectForKey("timeonly");
     _glyph =            _associations.removeObjectForKey("glyph");
@@ -88,10 +88,6 @@ public class BSDateTimePicker extends ERXWOTextField {
   public void appendAttributesToResponse(WOResponse response, WOContext context) {
     
     WOComponent component = context.component();
-    String _inputId = idInContext(context);
-    
-    String _defaultClass = "form-control";
-    response._appendTagAttributeAndValue("class", _defaultClass, false);
 
     if(_placeholderText != null) {
       String phText = (String)_placeholderText.valueInComponent(component);
@@ -99,16 +95,18 @@ public class BSDateTimePicker extends ERXWOTextField {
         response._appendTagAttributeAndValue("placeholder", phText, false);
       }
     }
+    
     super.appendAttributesToResponse(response, context);
   }
 
   public void appendToResponse(WOResponse response, WOContext context) {
     
-    String _inputId = idInContext(context);
+    String _divIdIfNeeded = divIdInContext(context);
     String _glyphLocation = glyphInContext(context);
     boolean _glyphLeft = _glyphLocation != null && _glyphLocation.equals(GLYPH_LEFT);
     boolean _glyphRight = _glyphLocation != null && _glyphLocation.equals(GLYPH_RIGHT);
     boolean _timeOnly = timeOnlyInContext(context);
+    boolean _hasGlyph = _glyphLeft ^ _glyphRight;
     
     //we need our boostrap components that are necesssary for date/time picker
     BSDynamicElement.InjectCSSAndJS(response, context);
@@ -120,7 +118,14 @@ public class BSDateTimePicker extends ERXWOTextField {
 
     //do some stuff here to wrap the input element
     StringBuilder sb = new StringBuilder();
-    sb.append("<div class=\"input-group\">");
+    if(_hasGlyph)
+      sb.append("<div class=\"form-group\">"); //this div needs to be here if there's a glyph
+    
+    sb.append("<div class=\"input-group\""); //append the normal outer div no matter what
+    if(_hasGlyph)
+      sb.append("id=" + _divIdIfNeeded); //this div needs to have the id if we're showing glyph
+    
+    sb.append(">"); //close the main div
     
     //if should show left-set glyphicon
     if(_glyphLeft) {
@@ -128,12 +133,14 @@ public class BSDateTimePicker extends ERXWOTextField {
     }
     
     response.appendContentString(sb.toString()); //append what we have so far
-
     super.appendToResponse(response, context); //generate our input element
     
     if(_glyphRight) {
       insertGlyphHtml(sb, context);
     }
+    
+    if(_hasGlyph)
+      sb.append("</div>"); //we only need this closing div if there's a glyph
     
     
     //finishing touches
@@ -145,7 +152,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private String pickerJS(WOContext context) {
     StringBuilder str = new StringBuilder();
     str.append("$(function () {$('#")
-    .append(idInContext(context))
+    .append(divIdInContext(context))
     .append("').datetimepicker(");
     if(dateOnlyInContext(context)) {
       log.debug("the content javascript is appending for date only");
@@ -173,7 +180,26 @@ public class BSDateTimePicker extends ERXWOTextField {
     return sb;
   }
   
+  @Override
+  public String idInContext(WOContext context) {
+    
+    String _theId = super.idInContext(context);
+    
+    if(glyphInContext(context) == null)
+      return _theId;
+    
+    //we do this because when using glyph the id should be attached to surrounding div
+    //so the input element should not have that id!!
+    return "";
+  }
   
+  public String divIdInContext(WOContext context) {
+    
+    if(_divId == null)
+      return null;
+    
+    return (String)_divId.valueInComponent(context.component());
+  }
 
   private boolean dateOnlyInContext(WOContext context) {
 
