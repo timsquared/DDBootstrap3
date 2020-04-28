@@ -67,7 +67,9 @@ public class BSDateTimePicker extends ERXWOTextField {
     super("input", nsdictionary, woelement);
     BSDynamicElementsHelper.AppendCSS(_associations, this);
     
-    _divId =            _associations.objectForKey("id"); //we do this because we need the id even when we don't want the input element to have it
+    //_divId =            _associations.objectForKey("id"); //we do this because we need the id even when we don't want the input element to have it
+    System.err.println("id at constructor: " + _associations.removeObjectForKey("id"));
+    //System.err.println("div id at constructor: " + _divId);
     _dateOnly =         _associations.removeObjectForKey("dateonly");
     _timeOnly =         _associations.removeObjectForKey("timeonly");
     _glyph =            _associations.removeObjectForKey("glyph");
@@ -115,7 +117,8 @@ public class BSDateTimePicker extends ERXWOTextField {
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/moment.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/bootstrap-datetimepicker.min.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/run_prettify.js");
-
+    
+    System.err.println("has glyph: " + _hasGlyph);
     //do some stuff here to wrap the input element
     StringBuilder sb = new StringBuilder();
     if(_hasGlyph)
@@ -182,7 +185,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   
   @Override
   public String idInContext(WOContext context) {
-    
+    System.err.println("divId is:" + _divId);
     String _theId = super.idInContext(context);
     
     if(glyphInContext(context) == null)
@@ -194,7 +197,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   }
   
   public String divIdInContext(WOContext context) {
-    
+    System.err.println("divId is:" + _divId);
     if(_divId == null)
       return null;
     
