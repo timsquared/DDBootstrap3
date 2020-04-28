@@ -70,6 +70,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     _associationsBackup = nsdictionary.mutableClone();
     _divId =            _associationsBackup.objectForKey("id"); //we do this because we need the id even when we don't want the input element to have it
     
+    _label =            _associations.removeObjectForKey("label");
     _dateOnly =         _associations.removeObjectForKey("dateonly");
     _timeOnly =         _associations.removeObjectForKey("timeonly");
     _glyph =            _associations.removeObjectForKey("glyph");
@@ -105,10 +106,12 @@ public class BSDateTimePicker extends ERXWOTextField {
     
     String _divIdIfNeeded = divIdInContext(context);
     String _glyphLocation = glyphInContext(context);
+    String _labelString = labelInContext(context);
     boolean _glyphLeft = _glyphLocation != null && _glyphLocation.equals(GLYPH_LEFT);
     boolean _glyphRight = _glyphLocation != null && _glyphLocation.equals(GLYPH_RIGHT);
     boolean _timeOnly = timeOnlyInContext(context);
     boolean _hasGlyph = _glyphLeft ^ _glyphRight;
+    boolean _hasLabel = _labelString != null && ! _labelString.equals("");
     
     //we need our boostrap components that are necesssary for date/time picker
     BSDynamicElement.InjectCSSAndJS(response, context);
@@ -119,9 +122,18 @@ public class BSDateTimePicker extends ERXWOTextField {
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/run_prettify.js");
     
     //do some stuff here to wrap the input element
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();    
     if(_hasGlyph)
-      sb.append("<div class=\"form-group\"><div class=\"col-sm-4\">"); //these div need to be here if there's a glyph
+      sb.append("<div class=\"form-group\">"); //these div need to be here if there's a glyph
+    
+    if(_hasLabel) {
+      sb.append("<label class=\"col-sm-2 control-label\">")
+      .append(_labelString)
+      .append("</label>");
+    }
+    
+    if(_hasGlyph)
+      sb.append("<div class=\"col-sm-4\">");//these div need to be here if there's a glyph
     
     sb.append("<div class=\"input-group\""); //append the normal outer div no matter what
     if(_hasGlyph)
@@ -236,6 +248,14 @@ public class BSDateTimePicker extends ERXWOTextField {
 
     String glyph = (String)_glyph.valueInComponent(context.component());
     return glyph;
+  }
+  
+  private String labelInContext(WOContext context) {
+    if(_label == null)
+      return null;
+    
+    String label = (String)_label.valueInComponent(context.component());
+    return label;
   }
 
   @Override
