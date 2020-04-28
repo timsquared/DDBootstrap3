@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dd.bootstrap.components.BSComponent;
+import com.dd.bootstrap.components.BSDynamicElement;
 import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
@@ -47,38 +48,31 @@ import er.extensions.validation.ERXValidationException;
 
 public class BSDateTimePicker extends ERXWOTextField {
 
-  private WOAssociation _myId; //String
   private WOAssociation _label; //String
   private WOAssociation _placeholderText;
   private WOAssociation _dateOnly; //Boolean
   private WOAssociation _timeOnly; //Boolean
-  private WOAssociation _myClass;
-  protected WOAssociation _blankIsNull;
-  private NSMutableDictionary<String,WOAssociation> _associationsBackup;
-
-  private static final String DATE_ONLY_DEFAULT_FORMAT = "MM/dd/yyyy";
-  private static final String TIME_ONLY_DEFAULT_FORMAT = "h:mm a";
-  private static final String DATE_TIME_DEFAULT_FORMAT = DATE_ONLY_DEFAULT_FORMAT + " " + TIME_ONLY_DEFAULT_FORMAT;
+  private WOAssociation _glyph; //String
+  //private NSMutableDictionary<String,WOAssociation> _associationsBackup;
+  
+  private static final String GLYPH_LEFT                = "left";
+  private static final String GLYPH_RIGHT               = "right";
+  private static final String DATE_ONLY_DEFAULT_FORMAT  = "MM/dd/yyyy";
+  private static final String TIME_ONLY_DEFAULT_FORMAT  = "h:mm a";
+  private static final String DATE_TIME_DEFAULT_FORMAT  = DATE_ONLY_DEFAULT_FORMAT + " " + TIME_ONLY_DEFAULT_FORMAT;
 
   private static Logger log = LoggerFactory.getLogger(BSDateTimePicker.class);
 
   public BSDateTimePicker(String tagname, NSDictionary nsdictionary, WOElement woelement) {
     super(tagname, nsdictionary, woelement);
-    _associationsBackup = nsdictionary.mutableClone();
-
-    _value =            (WOAssociation)nsdictionary.remove("value");
-    _myId =             (WOAssociation)nsdictionary.remove("id");
-    _myClass =          (WOAssociation)nsdictionary.remove("class"); //honestly, not doing anything with class at this point
-    _dateOnly =         (WOAssociation)nsdictionary.remove("dateonly");
-    _timeOnly =         (WOAssociation)nsdictionary.remove("timeonly");
-    _dateFormat =       (WOAssociation)nsdictionary.remove("dateformat");
-    _formatter =        (WOAssociation)nsdictionary.remove("formatter");
-    _placeholderText =  (WOAssociation)nsdictionary.remove("placeholder");
-    _blankIsNull = _associations.removeObjectForKey("blankIsNull");
+    BSDynamicElementsHelper.AppendCSS(_associations, this);
+    
+    _dateOnly =         _associations.removeObjectForKey("dateonly");
+    _timeOnly =         _associations.removeObjectForKey("timeonly");
+    _glyph =            _associations.removeObjectForKey("glyph");
+    _placeholderText =  _associations.removeObjectForKey("placeholder");
     _numberFormat =     WOAssociation.associationWithValue(null); //always destroy any number formatting
     _useDecimalNumber = WOAssociation.associationWithValue(null); //always destroy any number formatting
-    _id = null;
-    _class = null;
 
     if(_dateFormat != null && _formatter != null) {
       throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'dateFormat' and 'formatter' bound at the same time.");
@@ -91,12 +85,15 @@ public class BSDateTimePicker extends ERXWOTextField {
 
   @Override
   public void appendAttributesToResponse(WOResponse response, WOContext context) {
-
+    
+    WOComponent component = context.component();
+    String _inputId = inputId(context);
+    
     String _defaultClass = "form-control";
     response._appendTagAttributeAndValue("class", _defaultClass, false);
 
     if(_placeholderText != null) {
-      String phText = (String)_placeholderText.valueInComponent(context.component());
+      String phText = (String)_placeholderText.valueInComponent(component);
       if(phText.length() != 0) {
         response._appendTagAttributeAndValue("placeholder", phText, false);
       }
@@ -105,8 +102,15 @@ public class BSDateTimePicker extends ERXWOTextField {
   }
 
   public void appendToResponse(WOResponse response, WOContext context) {
-
+    
+    String _inputId = idInContext(context);
+    String _glyphLocation = glyphInContext(context);
+    boolean _glyphLeft = _glyphLocation != null && _glyphLocation.equals(GLYPH_LEFT);
+    boolean _glyphRight = _glyphLocation != null && _glyphLocation.equals(GLYPH_RIGHT);
+    boolean _timeOnly = timeOnlyInContext(context);
+    
     //we need our boostrap components that are necesssary for date/time picker
+    BSDynamicElement.InjectCSSAndJS(response, context);
     ERXResponseRewriter.addStylesheetResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "css/bootstrap-datetimepicker.min.css");
     ERXResponseRewriter.addStylesheetResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/prettify.css");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/moment.js");
@@ -114,25 +118,25 @@ public class BSDateTimePicker extends ERXWOTextField {
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/run_prettify.js");
 
     //do some stuff here to wrap the input element
-    String _idValue = divId(context);
     StringBuilder sb = new StringBuilder();
-    sb.append("<div class=\"input-group\" id=")
-    .append(_idValue)
-    .append("><span class=\"input-group-addon\">");
-    if(timeOnly(context)) {
-      sb.append("<span class=\"glyphicon glyphicon-time\">");
-    } else {
-      sb.append("<span class=\"glyphicon glyphicon-calendar\">");
+    sb.append("<div class=\"input-group\">");
+    
+    //if should show left-set glyphicon
+    if(_glyphLeft) {
+      insertGlyphHtml(sb, context);
     }
-    sb.append("</span></span>");
-    response.appendContentString(sb.toString());
+    
+    response.appendContentString(sb.toString()); //append what we have so far
 
     super.appendToResponse(response, context); //generate our input element
-    _appendValueAttributeToResponse(response, context);
+    
+    if(_glyphRight) {
+      insertGlyphHtml(sb, context);
+    }
+    
+    
+    //finishing touches
     response.appendContentString("</div>"); //close surrounding div after input
-
-    //do some stuff here to finish wrapping the input element
-
     //append the script that provides our function to activate the date/time picker
     ERXResponseRewriter.addScriptCodeInHead(response, context, pickerJS(context));
   }
@@ -140,22 +144,43 @@ public class BSDateTimePicker extends ERXWOTextField {
   private String pickerJS(WOContext context) {
     StringBuilder str = new StringBuilder();
     str.append("$(function () {$('#")
-    .append(divId(context))
+    .append(idInContext(context))
     .append("').datetimepicker(");
-    if(dateOnly(context)) {
-      System.err.println("the content javascript is appending for date only");
+    if(dateOnlyInContext(context)) {
+      log.debug("the content javascript is appending for date only");
       str.append("{format: 'L'}");
-    } else if(timeOnly(context)) {
-      System.err.println("the content javascript is appending for time only");
+    } else if(timeOnlyInContext(context)) {
+      log.debug("the content javascript is appending for time only");
       str.append("{format: 'LT'}");
-      //str.append("{format: 'HH:mm', pickDate:false }");
     }
     str.append(");});");
 
     return str.toString();
   }
+  
+  private StringBuilder insertGlyphHtml(StringBuilder sb, WOContext context) {
+    
+    StringBuilder _seed = sb;
+    _seed.append("<span class=\"input-group-addon\">");
+    if(timeOnlyInContext(context)) {
+      sb.append("<span class=\"glyphicon glyphicon-time\">");
+    } else {
+      sb.append("<span class=\"glyphicon glyphicon-calendar\">");
+    }
+    sb.append("</span></span>");
+    
+    return sb;
+  }
+  
+  private String inputId(WOContext context) {
+    if(_id == null)
+      return null;
+    
+    String _inputId = (String)_id.valueInComponent(context.component());
+    return _inputId;
+  }
 
-  private boolean dateOnly(WOContext context) {
+  private boolean dateOnlyInContext(WOContext context) {
 
     if(_dateOnly == null)
       return false;
@@ -167,7 +192,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     return false;
   }
 
-  private boolean timeOnly(WOContext context) {
+  private boolean timeOnlyInContext(WOContext context) {
 
     if(_timeOnly == null)
       return false;
@@ -177,6 +202,15 @@ public class BSDateTimePicker extends ERXWOTextField {
       return true;
 
     return false;
+  }
+  
+  private String glyphInContext(WOContext context) {
+
+    if(_glyph == null)
+      return null;
+
+    String glyph = (String)_glyph.valueInComponent(context.component());
+    return glyph;
   }
 
   @Override
@@ -210,8 +244,8 @@ public class BSDateTimePicker extends ERXWOTextField {
 
             try {
 
-              boolean useDateWithoutTime = dateOnly(context);
-              boolean useTimeWithoutDate = timeOnly(context);
+              boolean useDateWithoutTime = dateOnlyInContext(context);
+              boolean useTimeWithoutDate = timeOnlyInContext(context);
 
               if(useDateWithoutTime) {
                 log.debug("submitting date with no time");
@@ -261,6 +295,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   protected void _appendValueAttributeToResponse(WOResponse response, WOContext context) {
     WOComponent component = context.component();
     Object objValue = _value.valueInComponent(component);
+    log.debug("object value in component: '{}'", objValue);
     if (objValue != null) {
       String strValue = null;
       DateTimeFormatter format = formatter(context);
@@ -268,11 +303,11 @@ public class BSDateTimePicker extends ERXWOTextField {
         Object parsedValue = null;
         String formattedStrValue = null;
         try {
-          if(dateOnly(context)) {
+          if(dateOnlyInContext(context)) {
             formattedStrValue = ((LocalDate)objValue).format(format);
             parsedValue = LocalDate.parse(formattedStrValue, format);
             strValue = ((LocalDate)parsedValue).format(format);
-          } else if(timeOnly(context)) {
+          } else if(timeOnlyInContext(context)) {
             formattedStrValue = ((LocalTime)objValue).format(format);
             parsedValue = LocalTime.parse(formattedStrValue, format);
             strValue = ((LocalTime)parsedValue).format(format);
@@ -288,16 +323,19 @@ public class BSDateTimePicker extends ERXWOTextField {
         catch (DateTimeParseException parseexception) {
           NSLog._conditionallyLogPrivateException(parseexception);
         }
+        
+        log.debug("formatted string value: '{}'", formattedStrValue);
+        log.debug("parsed value and class: '{}', {}", parsedValue, parsedValue.getClass());
+        log.debug("string value: '{}'", strValue);
       }
+      
       if (strValue == null) {
         strValue = objValue.toString();
       }
-      if (_escapeHTML != null && _escapeHTML.booleanValueInComponent(component)) {
-        response.appendContentHTMLString(strValue);
-      }
-      else {
-        response.appendContentString(strValue);
-      }
+      response._appendTagAttributeAndValue("value", strValue, true);
+    }
+    if (isReadonlyInContext(context)) {
+      response._appendTagAttributeAndValue("readonly", "readonly", false);
     }
   }
 
@@ -305,12 +343,12 @@ public class BSDateTimePicker extends ERXWOTextField {
     if(_dateFormat != null)
       return (String)_dateFormat.valueInComponent(context.component());
     
-    if(timeOnly(context)) {
+    if(timeOnlyInContext(context)) {
       return TIME_ONLY_DEFAULT_FORMAT;
-    } else if(dateOnly(context)) {
+    } else if(dateOnlyInContext(context)) {
       return DATE_ONLY_DEFAULT_FORMAT;
     }
-    System.err.println("not using date-only in picker");
+    log.debug("not using date-only or time only in picker");
     return DATE_TIME_DEFAULT_FORMAT;
   }
 
@@ -336,12 +374,5 @@ public class BSDateTimePicker extends ERXWOTextField {
   protected String valueInContext(WOContext context) {
     Object value = _value == null ? null : _value.valueInComponent(context.component());
     return value == null ? null : value.toString();
-  }
-
-  public String divId(WOContext context) {
-    if(_myId == null) 
-      return ERXWOContext.safeIdentifierName(context, false);
-
-    return (String) _myId.valueInComponent(context.component());
   }
 }
