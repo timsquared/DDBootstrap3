@@ -121,7 +121,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     //do some stuff here to wrap the input element
     StringBuilder sb = new StringBuilder();
     if(_hasGlyph)
-      sb.append("<div class=\"form-group\"><div class=\"col-sm-6\">"); //these div need to be here if there's a glyph
+      sb.append("<div class=\"form-group\"><div class=\"col-sm-4\">"); //these div need to be here if there's a glyph
     
     sb.append("<div class=\"input-group\""); //append the normal outer div no matter what
     if(_hasGlyph)
