@@ -54,6 +54,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   private WOAssociation _timeOnly; //Boolean
   private WOAssociation _glyph; //String
   private WOAssociation _divId; //String
+  private NSMutableDictionary<String,WOAssociation> _associationsBackup;
   
   private static final String GLYPH_LEFT                = "left";
   private static final String GLYPH_RIGHT               = "right";
@@ -66,10 +67,9 @@ public class BSDateTimePicker extends ERXWOTextField {
   public BSDateTimePicker(String tagname, NSDictionary nsdictionary, WOElement woelement) {
     super("input", nsdictionary, woelement);
     BSDynamicElementsHelper.AppendCSS(_associations, this);
+    _associationsBackup = nsdictionary.mutableClone();
+    _divId =            _associationsBackup.objectForKey("id"); //we do this because we need the id even when we don't want the input element to have it
     
-    //_divId =            _associations.objectForKey("id"); //we do this because we need the id even when we don't want the input element to have it
-    System.err.println("id at constructor: " + _associations.removeObjectForKey("id"));
-    //System.err.println("div id at constructor: " + _divId);
     _dateOnly =         _associations.removeObjectForKey("dateonly");
     _timeOnly =         _associations.removeObjectForKey("timeonly");
     _glyph =            _associations.removeObjectForKey("glyph");
@@ -118,11 +118,10 @@ public class BSDateTimePicker extends ERXWOTextField {
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "js/bootstrap-datetimepicker.min.js");
     ERXResponseRewriter.addScriptResourceInHead(response, context, BSComponent.FRAMEWORK_NAME, "prettify/run_prettify.js");
     
-    System.err.println("has glyph: " + _hasGlyph);
     //do some stuff here to wrap the input element
     StringBuilder sb = new StringBuilder();
     if(_hasGlyph)
-      sb.append("<div class=\"form-group\">"); //this div needs to be here if there's a glyph
+      sb.append("<div class=\"form-group\"><div class=\"col-sm-6\">"); //these div need to be here if there's a glyph
     
     sb.append("<div class=\"input-group\""); //append the normal outer div no matter what
     if(_hasGlyph)
@@ -138,16 +137,18 @@ public class BSDateTimePicker extends ERXWOTextField {
     response.appendContentString(sb.toString()); //append what we have so far
     super.appendToResponse(response, context); //generate our input element
     
+    sb = new StringBuilder();
     if(_glyphRight) {
       insertGlyphHtml(sb, context);
     }
     
-    if(_hasGlyph)
-      sb.append("</div>"); //we only need this closing div if there's a glyph
-    
+    if(_hasGlyph) {
+      sb.append("</div></div>");
+    }
     
     //finishing touches
-    response.appendContentString("</div>"); //close surrounding div after input
+    sb.append("</div>"); //closing div
+    response.appendContentString(sb.toString());
     //append the script that provides our function to activate the date/time picker
     ERXResponseRewriter.addScriptCodeInHead(response, context, pickerJS(context));
   }
@@ -185,7 +186,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   
   @Override
   public String idInContext(WOContext context) {
-    System.err.println("divId is:" + _divId);
+    
     String _theId = super.idInContext(context);
     
     if(glyphInContext(context) == null)
@@ -197,7 +198,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   }
   
   public String divIdInContext(WOContext context) {
-    System.err.println("divId is:" + _divId);
+    
     if(_divId == null)
       return null;
     
@@ -251,9 +252,7 @@ public class BSDateTimePicker extends ERXWOTextField {
         String stringValue;
         boolean blankIsNull = _blankIsNull == null || _blankIsNull.booleanValueInComponent(component);
         if (blankIsNull) {
-          System.err.println("blank is null");
           stringValue = worequest.stringFormValueForKey(name);
-          System.err.println("string value: " + stringValue);
         }
         else {
           Object objValue = worequest.formValueForKey(name);
