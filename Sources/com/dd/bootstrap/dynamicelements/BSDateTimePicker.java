@@ -58,7 +58,7 @@ public class BSDateTimePicker extends ERXWOTextField {
   
   private static final String GLYPH_LEFT                = "left";
   private static final String GLYPH_RIGHT               = "right";
-  private static final String DATE_ONLY_DEFAULT_FORMAT  = "MM/dd/yyyy";
+  private static final String DATE_ONLY_DEFAULT_FORMAT  = "yyyy-MM-dd";
   private static final String TIME_ONLY_DEFAULT_FORMAT  = "h:mm a";
   private static final String DATE_TIME_DEFAULT_FORMAT  = DATE_ONLY_DEFAULT_FORMAT + " " + TIME_ONLY_DEFAULT_FORMAT;
 
@@ -77,7 +77,7 @@ public class BSDateTimePicker extends ERXWOTextField {
     _placeholderText =  _associations.removeObjectForKey("placeholder");
     _numberFormat =     WOAssociation.associationWithValue(null); //always destroy any number formatting
     _useDecimalNumber = WOAssociation.associationWithValue(null); //always destroy any number formatting
-
+    
     if(_dateFormat != null && _formatter != null) {
       throw new WODynamicElementCreationException("<" + getClass().getName() + "> Cannot have 'dateFormat' and 'formatter' bound at the same time.");
     }
@@ -260,6 +260,7 @@ public class BSDateTimePicker extends ERXWOTextField {
 
   @Override
   public void takeValuesFromRequest(WORequest worequest, WOContext context) {
+    
     WOComponent component = context.component();
     DateTimeFormatter format = formatter(context);
     if(_formatter == null) {
@@ -383,8 +384,11 @@ public class BSDateTimePicker extends ERXWOTextField {
   }
 
   private String dateFormat(WOContext context) {
-    if(_dateFormat != null)
-      return (String)_dateFormat.valueInComponent(context.component());
+    if(_dateFormat != null) {
+      String _df = (String)_dateFormat.valueInComponent(context.component());
+      return _df;
+    }
+      
     
     if(timeOnlyInContext(context)) {
       return TIME_ONLY_DEFAULT_FORMAT;
